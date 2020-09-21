@@ -62,8 +62,7 @@ async function createInitialPosts() {
         tags: ["#itoldthemiinventedtimesnewroman","#sharknado7"]
         
       });
-  
-      // a couple more
+
     } catch (error) {
       throw error;
     }
@@ -182,8 +181,6 @@ async function testDB() {
       });
       console.log("Result:", updatePostTagsResult);
 
-
-      
       console.log("Finished database tests!");
       } catch (error) {
       console.error("Error during testDB");
