@@ -1,37 +1,42 @@
 const PORT = 3000;
 const express = require('express');
 const server = express();
-const bodyParser = require('body-parser');
-const { client } = require('./db');
-client.connect();
 
-server.use(bodyParser.json());
-
+require('dotenv').config();
 const morgan = require('morgan');
 server.use(morgan('dev'));
 
-server.use((req, res, next) => {
-    console.log("<____Body Logger START____>");
-    console.log(req.body);
-    console.log("<_____Body Logger END_____>");
-  
-    next();
-});
-
+const bodyParser = require('body-parser');
+server.use(bodyParser.json());
 
 const apiRouter = require('./api');
 server.use('/api', apiRouter);
 
-server.get('/api/posts', async (req, res, next) => {
-    console.log('this is firing');
-    return
-});
+const { client } = require('./db');
+client.connect();
 
-server.get('/api/tags', async (req, res, next) => {
-    console.log('this is firing');
-    return
+server.use((req, res, next) => {
+  console.log("<____Body Logger START____>");
+  console.log(req.body);
+  console.log("<_____Body Logger END_____>");
+  
+  next();
 });
-
+apiRouter.use((error, req, res, next) => {
+  res.send(error);
+});
+server.get('*', (req, res, next) => {
+    res.status(404).send('Oops! :(');
+});
 server.listen(PORT, () => {
   console.log('The server is up on port', PORT)
 });
+
+
+
+
+
+
+
+
+
