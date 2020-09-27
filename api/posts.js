@@ -9,8 +9,7 @@ postsRouter.post('/', requireUser, async (req, res, next) => {
   
     const tagArr = tags.trim().split(/\s+/)
     const postData = {};
-  
-    // only send the tags if there are some to send
+
     if (tagArr.length) {
       postData.tags = tagArr;
     }
@@ -24,11 +23,6 @@ postsRouter.post('/', requireUser, async (req, res, next) => {
         const post = await createPost(postData);
 
         post ? res.send({post}) : next({error});
-      // add authorId, title, content to postData object
-      
-      // this will create the post and the tags for us
-      // if the post comes back, res.send({ post });
-      // otherwise, next an appropriate error object 
     } catch ({ name, message }) {
       next({ name, message });
     }
@@ -38,7 +32,6 @@ postsRouter.post('/', requireUser, async (req, res, next) => {
 postsRouter.patch('/:postId', requireUser, async (req, res, next) => {
     const { postId } = req.params;
     const { title, content, tags } = req.body;
-  
     const updateFields = {};
   
     if (tags && tags.length > 0) {
@@ -79,7 +72,7 @@ postsRouter.delete('/:postId', requireUser, async (req, res, next) => {
   
         res.send({ post: updatedPost });
       } else {
-        // if there was a post, throw UnauthorizedUserError, otherwise throw PostNotFoundError
+       
         next(post ? { 
           name: "UnauthorizedUserError",
           message: "You cannot delete a post which is not yours"
@@ -94,27 +87,22 @@ postsRouter.delete('/:postId', requireUser, async (req, res, next) => {
     }
 });
 
-
-
 postsRouter.get('/', async (req, res) => {
     const allPosts = await getAllPosts();
     const posts = allPosts.filter(post => {
-        // the post is active, doesn't matter who it belongs to
+       
         if (post.active) {
           return true;
         }
       
-        // the post is not active, but it belogs to the current user
         if (req.user && post.author.id === req.user.id) {
           return true;
         }
       
-        // none of the above are true
         return false;
     });
     res.send({ posts });
 });
-
 
 postsRouter.use((req, res, next) => {
     console.log("A request is being made to /posts");
